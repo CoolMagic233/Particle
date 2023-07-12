@@ -1,0 +1,17 @@
+#particle settings
+debug: false
+#shop settings
+shop:
+  #name:coins:displayFormat
+  walk:
+    - "REDSTONE_TORCH_DUST:2000:红石花\n售价_2000H币"
+    - "VILLAGER_HAPPY:2000:绿星星\n售价_2000H币"
+  death:
+    - "REDSTONE_TORCH_DUST:2000:红石花\n售价_2000H币"
+    - "VILLAGER_HAPPY:2000:绿星星\n售价_2000H币"
+  arrow:
+    - "REDSTONE_TORCH_DUST:2000:红石花\n售价_2000H币"
+    - "VILLAGER_HAPPY:2000:绿星星\n售价_2000H币"
+  #击杀特效目前只做了这一种
+  beat:
+    - "lightning:2000:天降神雷\n售价_2000H币"

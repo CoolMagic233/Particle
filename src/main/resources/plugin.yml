@@ -1,0 +1,4 @@
+name: Particle
+main: me.coolmagic233.particle.Main
+version: 1.0-alpha
+api: 1.0.0
