@@ -141,29 +141,37 @@ public class ShopForm implements Listener {
                 case SHOP_ENABLE_ARROW:
                     if (pd.getRuntime_arrow().equals("none")) {
                         plugin.setParticle(player, pd.getArrow().get(form.getClickedButtonId()), "arrow");
+                        player.sendMessage(" >> 已装备粒子效果 "+ pd.getArrow().get(form.getClickedButtonId()));
                     } else {
                         plugin.setParticle(player, "none", "arrow");
+                        player.sendMessage(" >> 已卸下粒子效果 "+ pd.getArrow().get(form.getClickedButtonId()));
                     }
                     break;
                 case SHOP_ENABLE_BEAT:
                     if (pd.getRuntime_beat().equals("none")) {
                         plugin.setParticle(player, pd.getBeat().get(form.getClickedButtonId()), "beat");
+                        player.sendMessage(" >> 已装备粒子效果 "+ pd.getBeat().get(form.getClickedButtonId()));
                     } else {
                         plugin.setParticle(player, "none", "beat");
+                        player.sendMessage(" >> 已卸下粒子效果 "+ pd.getBeat().get(form.getClickedButtonId()));
                     }
                     break;
                 case SHOP_ENABLE_WALK:
                     if (pd.getRuntime_walk().equals("none")) {
                         plugin.setParticle(player, pd.getWalk().get(form.getClickedButtonId()), "walk");
+                        player.sendMessage(" >> 已装备粒子效果 "+ pd.getWalk().get(form.getClickedButtonId()));
                     } else {
                         plugin.setParticle(player, "none", "walk");
+                        player.sendMessage(" >> 已卸下粒子效果 "+ pd.getWalk().get(form.getClickedButtonId()));
                     }
                     break;
                 case SHOP_ENABLE_DEATH:
                     if (pd.getRuntime_death().equals("none")) {
                         plugin.setParticle(player, pd.getDeath().get(form.getClickedButtonId()), "death");
+                        player.sendMessage(" >> 已装备粒子效果 "+ pd.getDeath().get(form.getClickedButtonId()));
                     } else {
                         plugin.setParticle(player, "none", "death");
+                        player.sendMessage(" >> 已卸下粒子效果 "+ pd.getDeath().get(form.getClickedButtonId()));
                     }
                     break;
 

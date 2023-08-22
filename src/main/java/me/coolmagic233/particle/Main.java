@@ -44,7 +44,7 @@ public class Main extends PluginBase implements Listener {
         saveDefaultConfig();
         debug = getConfig().getBoolean("debug");
         getServer().getPluginManager().registerEvents(this,this);
-        getServer().getCommandMap().register("", new Command("particle","Particle Command") {
+        getServer().getCommandMap().register("", new Command("pc","Particle Command") {
             @Override
             public boolean execute(CommandSender commandSender, String s, String[] strings) {
                 if (strings.length >= 1) {
@@ -66,16 +66,67 @@ public class Main extends PluginBase implements Listener {
                         case "menu":
                             if(commandSender.isPlayer()){
                                 FormWindowSimple simple_main = new FormWindowSimple(Main.getInstance().getDescription().getName(),"");
-                                simple_main.addButton(new ElementButton("Enable Particle"));
-                                simple_main.addButton(new ElementButton("Buy Particle"));
+                                simple_main.addButton(new ElementButton("装备粒子"));
+                                simple_main.addButton(new ElementButton("购买粒子"));
                                 ((Player) commandSender).showFormWindow(simple_main, ShopForm.SHOP_MAIN);
                             }
                             break;
+                        case "add":
+                            if(commandSender.isOp()){
+                                Player player = getServer().getPlayer(strings[1]);
+                                if (player == null){
+                                    commandSender.sendMessage("添加粒子失败,请确认玩家是否在线!");
+                                    return true;
+                                }
+                                switch (strings[3]){
+                                    case "arrow":
+                                        getParticleData(player).addArrow(strings[2]);
+                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        break;
+                                    case "walk":
+                                        getParticleData(player).addWalk(strings[2]);
+                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        break;
+                                    case "beat":
+                                        getParticleData(player).addBeat(strings[2]);
+                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        break;
+                                    case "death":
+                                        getParticleData(player).addDeath(strings[2]);
+                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        break;
+                                    default: commandSender.sendMessage("不存在粒子类型 "+strings[3]);
+                                }
+                            }break;
+                            case "del":
+                            if(commandSender.isOp()){
+                                Player player = getServer().getPlayer(strings[1]);
+                                if (player == null){
+                                    commandSender.sendMessage("移除粒子失败,请确认玩家是否在线!");
+                                    return true;
+                                }
+                                switch (strings[3]){
+                                    case "arrow":
+                                        getParticleData(player).removeArrow(strings[2]);
+                                        break;
+                                    case "walk":
+                                        getParticleData(player).removeWalk(strings[2]);
+                                        break;
+                                    case "beat":
+                                        getParticleData(player).removeBeat(strings[2]);
+                                        break;
+                                    case "death":
+                                        getParticleData(player).removeDeath(strings[2]);
+                                        break;
+                                    default: commandSender.sendMessage("不存在粒子类型 "+strings[3]);
+                                }
+                            }break;
                         case "help":
                             if (strings.length == 1) {
                                 commandSender.sendMessage("========Particle Helps =======");
-                                commandSender.sendMessage("/particle set player type etype");
-                                commandSender.sendMessage("/particle help ");
+                                commandSender.sendMessage("/pc set player type etype");
+                                commandSender.sendMessage("/pc add/del player type etype");
+                                commandSender.sendMessage("/pc help ");
                             }
                             break;
                         default:break;
@@ -158,7 +209,6 @@ public class Main extends PluginBase implements Listener {
             player.sendMessage("§c粒子数据同步失败, 请联系开发组解决, 错误代码: §e" + exception.getMessage());
             return;
         }
-        player.sendMessage("粒子数据已同步!");
     }
 
     @EventHandler
@@ -169,7 +219,6 @@ public class Main extends PluginBase implements Listener {
         switch (getParticleData(killer).getRuntime_beat()){
             case "lightning":
                 EntityLightning lightning = new EntityLightning(e.getEntity().getChunk(), EntityLightning.getDefaultNBT(e.getEntity()));
-                lightning.setEffect(false);
                 lightning.spawnToAll();
                 break;
             default:break;
@@ -181,18 +230,19 @@ public class Main extends PluginBase implements Listener {
         Player player = (Player) e.getEntity().shootingEntity;
         if(player != null){
             getServer().getScheduler().scheduleRepeatingTask(new Task() {
+                //缓冲箭矢,避免提前消失
+                int tick = 0;
                 @Override
                 public void onRun(int i) {
                        try {
                            if(e.getEntity() instanceof EntityArrow){
                                e.getEntity().getLevel().addParticleEffect(e.getEntity().getLocation(),ParticleEffect.valueOf(getParticleData(player).getRuntime_arrow()));
-                               if(e.getEntity().isCollided
-                                       || e.getEntity().isOnGround()
-                                       || e.getEntity().isClosed()
-                               ){
-                                   e.getEntity().kill();
-                                   this.cancel();
-                               }}
+                                   tick ++;
+                                   //箭矢在碰撞的3s内被清除
+                                   if (tick >= 60){
+                                       this.cancel();
+                                   }
+                               }
                        }catch (Exception ignored){
                            this.cancel();
                        }
@@ -215,6 +265,7 @@ public class Main extends PluginBase implements Listener {
     }
     @EventHandler
     public void onMove(PlayerMoveEvent e){
+        if (e.getPlayer().getGamemode() == 3) return;
         try{
             ParticleData particleData = null;
             for (ParticleData particle : particles) {

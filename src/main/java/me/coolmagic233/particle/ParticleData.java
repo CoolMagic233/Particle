@@ -23,7 +23,11 @@ public class ParticleData {
         return walk;
     }
     public void addWalk(String s) {
-      walk.add(s);
+        if (getWalk().contains(s)){
+            player.sendMessage(" >> 该粒子效果已存在");
+            return;
+        }
+        walk.add(s);
         save();
     }
     public void addWalk(String s,double coins){
@@ -35,7 +39,20 @@ public class ParticleData {
             player.sendMessage("Buy successful!");
         }
     }
+    public void removeWalk(String s){
+        while (getWalk().iterator().hasNext()){
+            String obj = getWalk().iterator().next();
+            if (obj.equals(s)){
+                getWalk().iterator().remove();
+            }
+        }
+        save();
+        player.sendMessage(" >> 已移除粒子效果 "+s);
+    }
     public void addDeath(String s) {
+        if (getDeath().contains(s)){
+            player.sendMessage(" >> 该粒子效果已存在");
+        }
         death.add(s);
         save();
     }
@@ -48,7 +65,20 @@ public class ParticleData {
             player.sendMessage("Buy successful!");
         }
     }
+    public void removeDeath(String s){
+        while (getDeath().iterator().hasNext()){
+            String obj = getDeath().iterator().next();
+            if (obj.equals(s)){
+                getDeath().iterator().remove();
+            }
+        }
+        save();
+        player.sendMessage(" >> 已移除粒子效果 "+s);
+    }
     public void addArrow(String s) {
+        if (getArrow().contains(s)){
+            player.sendMessage(" >> 该粒子效果已存在");
+        }
         arrow.add(s);
         save();
     }
@@ -61,7 +91,20 @@ public class ParticleData {
             player.sendMessage("Buy successful!");
         }
     }
+    public void removeArrow(String s){
+        while (getArrow().iterator().hasNext()){
+            String obj = getArrow().iterator().next();
+            if (obj.equals(s)){
+                getArrow().iterator().remove();
+            }
+        }
+        save();
+        player.sendMessage(" >> 已移除粒子效果 "+s);
+    }
     public void addBeat(String s) {
+        if (getBeat().contains(s)){
+            player.sendMessage(" >> 该粒子效果已存在");
+        }
         beat.add(s);
         save();
     }
@@ -74,7 +117,16 @@ public class ParticleData {
             player.sendMessage("Buy successful!");
         }
     }
-
+    public void removeBeat(String s){
+        while (getBeat().iterator().hasNext()){
+            String obj = getBeat().iterator().next();
+            if (obj.equals(s)){
+                getBeat().iterator().remove();
+            }
+        }
+        save();
+        player.sendMessage(" >> 已移除粒子效果 "+s);
+    }
     public void save(){
         Main.getInstance().getServer().getScheduler().scheduleAsyncTask(Main.getInstance(), new AsyncTask() {
             @Override

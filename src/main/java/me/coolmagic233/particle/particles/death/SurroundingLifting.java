@@ -22,7 +22,7 @@ public class SurroundingLifting extends AsyncTask {
         LinkedList<Vector3> list = Utils.getRoundEdgePoint(player.getLocation(), 1);
         double y = 0;
         for (Vector3 vector3 : list) {
-            vector3.y = y+0.2;
+            vector3.y = y+0.3;
             y = vector3.y;
             try {
                 player.getLevel().addParticleEffect(vector3,ParticleEffect.valueOf(particleData.getRuntime_death()));
