@@ -36,6 +36,7 @@ import java.util.*;
 public class Main extends PluginBase implements Listener {
     private static Main main;
     private boolean debug;
+    private boolean EDR;
     private ShopConfig shopConfig;
     private Shop shop;
     private List<ParticleData> particles = new ArrayList<>();
@@ -43,6 +44,7 @@ public class Main extends PluginBase implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         debug = getConfig().getBoolean("debug");
+        EDR = getConfig().getBoolean("EDR");
         getServer().getPluginManager().registerEvents(this,this);
         getServer().getCommandMap().register("", new Command("pc","Particle Command") {
             @Override
@@ -80,20 +82,16 @@ public class Main extends PluginBase implements Listener {
                                 }
                                 switch (strings[3]){
                                     case "arrow":
-                                        getParticleData(player).addArrow(strings[2]);
-                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        getParticleData(player).addArrow(strings[2],0);
                                         break;
                                     case "walk":
-                                        getParticleData(player).addWalk(strings[2]);
-                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        getParticleData(player).addWalk(strings[2],0);
                                         break;
                                     case "beat":
-                                        getParticleData(player).addBeat(strings[2]);
-                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        getParticleData(player).addBeat(strings[2],0);
                                         break;
                                     case "death":
-                                        getParticleData(player).addDeath(strings[2]);
-                                        player.sendMessage(" >> 获得粒子效果 "+ strings[2] + " 永久时效");
+                                        getParticleData(player).addDeath(strings[2],0);
                                         break;
                                     default: commandSender.sendMessage("不存在粒子类型 "+strings[3]);
                                 }
@@ -159,56 +157,61 @@ public class Main extends PluginBase implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
-        try{
-            List<Object> particle_runtime = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_runtime")),",");
-            ParticleData particleData = new ParticleData();
-            particleData.setPlayer(player);
-            if(particle_runtime.size() < 2) {
-                DataManager.getInstance().setData(player,"particle_runtime","walk.none,beat.none,death.none,arrow.none");
-                particle_runtime = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_runtime")),",");
-            }
-            for (Object particleRuntime : particle_runtime) {
-                String[] strings = String.valueOf(particleRuntime).split("\\.");
-                switch (strings[0]){
-                    case "beat": particleData.setRuntime_beat(strings[1]);break;
-                    case "walk": particleData.setRuntime_walk(strings[1]);break;
-                    case "death": particleData.setRuntime_death(strings[1]);break;
-                    case "arrow": particleData.setRuntime_arrow(strings[1]);break;
-                    default: break;
+        getServer().getScheduler().scheduleDelayedTask(new Task() {
+            @Override
+            public void onRun(int i) {
+                try{
+                    List<Object> particle_runtime = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_runtime")),",");
+                    ParticleData particleData = new ParticleData();
+                    particleData.setPlayer(player);
+                    if(particle_runtime.size() < 2) {
+                        DataManager.getInstance().setData(player,"particle_runtime","walk.none,beat.none,death.none,arrow.none");
+                        particle_runtime = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_runtime")),",");
+                    }
+                    for (Object particleRuntime : particle_runtime) {
+                        String[] strings = String.valueOf(particleRuntime).split("\\.");
+                        switch (strings[0]){
+                            case "beat": particleData.setRuntime_beat(strings[1]);break;
+                            case "walk": particleData.setRuntime_walk(strings[1]);break;
+                            case "death": particleData.setRuntime_death(strings[1]);break;
+                            case "arrow": particleData.setRuntime_arrow(strings[1]);break;
+                            default: break;
+                        }
+                    }
+                    List particle_beat = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_beat")),",");
+                    List particle_walk = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_walk")),",");
+                    List particle_death = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_death")),",");
+                    List particle_arrow = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_arrow")),",");
+                    for (Object beat : particle_beat) {
+                        if(!particleData.getBeat().contains(String.valueOf(beat))){
+                            particleData.getBeat().add(String.valueOf(beat));
+                        }
+                    }
+                    for (Object death : particle_death) {
+                        if(!particleData.getDeath().contains(String.valueOf(death))){
+                            particleData.getDeath().add(String.valueOf(death));
+                        }
+                    }
+                    for (Object walk : particle_walk) {
+                        if(!particleData.getWalk().contains(String.valueOf(walk))){
+                            particleData.getWalk().add(String.valueOf(walk));
+                        }
+                    }
+                    for (Object arrow : particle_arrow) {
+                        if(!particleData.getArrow().contains(String.valueOf(arrow))){
+                            particleData.getArrow().add(String.valueOf(arrow));
+                        }
+                    }
+                    if(!particles.contains(particleData)){
+                        particles.add(particleData);
+                    }
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                    player.sendMessage("§c粒子数据同步失败, 请联系开发组解决, 错误代码: §e" + exception.getMessage());
+                    return;
                 }
             }
-            List particle_beat = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_beat")),",");
-            List particle_walk = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_walk")),",");
-            List particle_death = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_death")),",");
-            List particle_arrow = Utils.toList(String.valueOf(DataManager.getInstance().getData(player,"particle_arrow")),",");
-            for (Object beat : particle_beat) {
-                if(!particleData.getBeat().contains(String.valueOf(beat))){
-                    particleData.getBeat().add(String.valueOf(beat));
-                }
-            }
-            for (Object death : particle_death) {
-                if(!particleData.getDeath().contains(String.valueOf(death))){
-                    particleData.getDeath().add(String.valueOf(death));
-                }
-            }
-            for (Object walk : particle_walk) {
-                if(!particleData.getWalk().contains(String.valueOf(walk))){
-                    particleData.getWalk().add(String.valueOf(walk));
-                }
-            }
-            for (Object arrow : particle_arrow) {
-                if(!particleData.getArrow().contains(String.valueOf(arrow))){
-                    particleData.getArrow().add(String.valueOf(arrow));
-                }
-            }
-            if(!particles.contains(particleData)){
-                particles.add(particleData);
-            }
-        }catch (Exception exception){
-            exception.printStackTrace();
-            player.sendMessage("§c粒子数据同步失败, 请联系开发组解决, 错误代码: §e" + exception.getMessage());
-            return;
-        }
+        },40);
     }
 
     @EventHandler
@@ -265,7 +268,6 @@ public class Main extends PluginBase implements Listener {
     }
     @EventHandler
     public void onMove(PlayerMoveEvent e){
-        if (e.getPlayer().getGamemode() == 3) return;
         try{
             ParticleData particleData = null;
             for (ParticleData particle : particles) {
@@ -373,5 +375,7 @@ public class Main extends PluginBase implements Listener {
         return shop;
     }
 
-
+    public boolean EDRisEnable() {
+        return EDR;
+    }
 }

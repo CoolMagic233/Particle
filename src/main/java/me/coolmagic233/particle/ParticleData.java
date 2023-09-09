@@ -23,21 +23,20 @@ public class ParticleData {
         return walk;
     }
     public void addWalk(String s) {
-        if (getWalk().contains(s)){
-            player.sendMessage(" >> 该粒子效果已存在");
-            return;
-        }
+        player.sendMessage(" >> 获取行走粒子效果 "+s);
         walk.add(s);
         save();
     }
     public void addWalk(String s,double coins){
-        if(getWalk().contains(s)){
-            player.sendMessage("You already have this particle.");
-        }else {
-            EconomyAPI.getInstance().reduceMoney(player,coins);
-            addWalk(s);
-            player.sendMessage("Buy successful!");
+        EconomyAPI.getInstance().reduceMoney(player,coins);
+        if (Main.getInstance().EDRisEnable()){
+            if (getWalk().contains(s)){
+                player.sendMessage(" >> 该粒子效果已存在,已退回金额");
+                EconomyAPI.getInstance().addMoney(player,coins);
+                return;
+            }
         }
+        addWalk(s);
     }
     public void removeWalk(String s){
         while (getWalk().iterator().hasNext()){
@@ -50,20 +49,20 @@ public class ParticleData {
         player.sendMessage(" >> 已移除粒子效果 "+s);
     }
     public void addDeath(String s) {
-        if (getDeath().contains(s)){
-            player.sendMessage(" >> 该粒子效果已存在");
-        }
+        player.sendMessage(" >> 获得死亡粒子效果 "+s);
         death.add(s);
         save();
     }
     public void addDeath(String s,double coins){
-        if(getDeath().contains(s)){
-            player.sendMessage("You already have this particle.");
-        }else {
-            EconomyAPI.getInstance().reduceMoney(player,coins);
-            addDeath(s);
-            player.sendMessage("Buy successful!");
+        EconomyAPI.getInstance().reduceMoney(player,coins);
+        if (Main.getInstance().EDRisEnable()){
+            if (getDeath().contains(s)){
+                player.sendMessage(" >> 该粒子效果已存在,已退回金额");
+                EconomyAPI.getInstance().addMoney(player,coins);
+                return;
+            }
         }
+        addDeath(s);
     }
     public void removeDeath(String s){
         while (getDeath().iterator().hasNext()){
@@ -76,20 +75,20 @@ public class ParticleData {
         player.sendMessage(" >> 已移除粒子效果 "+s);
     }
     public void addArrow(String s) {
-        if (getArrow().contains(s)){
-            player.sendMessage(" >> 该粒子效果已存在");
-        }
+        player.sendMessage(" >> 获得箭矢粒子效果 "+s);
         arrow.add(s);
         save();
     }
     public void addArrow(String s,double coins) {
-        if(getArrow().contains(s)){
-            player.sendMessage("You already have this particle.");
-        }else {
-            EconomyAPI.getInstance().reduceMoney(player,coins);
-            addArrow(s);
-            player.sendMessage("Buy successful!");
+        EconomyAPI.getInstance().reduceMoney(player,coins);
+        if (Main.getInstance().EDRisEnable()){
+            if (getArrow().contains(s)){
+                player.sendMessage(" >> 该粒子效果已存在,已退回金额");
+                EconomyAPI.getInstance().addMoney(player,coins);
+                return;
+            }
         }
+        addArrow(s);
     }
     public void removeArrow(String s){
         while (getArrow().iterator().hasNext()){
@@ -102,20 +101,20 @@ public class ParticleData {
         player.sendMessage(" >> 已移除粒子效果 "+s);
     }
     public void addBeat(String s) {
-        if (getBeat().contains(s)){
-            player.sendMessage(" >> 该粒子效果已存在");
-        }
+        player.sendMessage(" >> 获得击杀粒子效果 "+s);
         beat.add(s);
         save();
     }
     public void addBeat(String s,double coins) {
-        if(getBeat().contains(s)){
-            player.sendMessage("You already have this particle.");
-        }else {
-            EconomyAPI.getInstance().reduceMoney(player,coins);
-            addBeat(s);
-            player.sendMessage("Buy successful!");
+        EconomyAPI.getInstance().reduceMoney(player,coins);
+        if (Main.getInstance().EDRisEnable()){
+            if (getBeat().contains(s)){
+                player.sendMessage(" >> 该粒子效果已存在,已退回金额");
+                EconomyAPI.getInstance().addMoney(player,coins);
+                return;
+            }
         }
+        addBeat(s);
     }
     public void removeBeat(String s){
         while (getBeat().iterator().hasNext()){

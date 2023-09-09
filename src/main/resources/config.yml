@@ -1,5 +1,7 @@
 #particle settings
 debug: false
+#Enable duplicate redemption
+EDR: true
 #shop settings
 shop:
   #name:coins:displayFormat
