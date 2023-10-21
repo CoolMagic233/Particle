@@ -222,6 +222,7 @@ public class Main extends PluginBase implements Listener {
         switch (getParticleData(killer).getRuntime_beat()){
             case "lightning":
                 EntityLightning lightning = new EntityLightning(e.getEntity().getChunk(), EntityLightning.getDefaultNBT(e.getEntity()));
+                lightning.setEffect(false);
                 lightning.spawnToAll();
                 break;
             default:break;
@@ -268,6 +269,7 @@ public class Main extends PluginBase implements Listener {
     }
     @EventHandler
     public void onMove(PlayerMoveEvent e){
+        if(e.getPlayer().getGamemode() == 3) return;
         try{
             ParticleData particleData = null;
             for (ParticleData particle : particles) {
